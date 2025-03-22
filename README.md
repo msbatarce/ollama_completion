@@ -1,4 +1,4 @@
-#
+# Ollama bash completions
 
 ## Installation
 
@@ -9,6 +9,8 @@
    wget -q -O - github.com/msbatarce/ollama_completion/raw/master/ollama_completion.bash >> ~/.bash_completions.d/ollama
    echo ". ~/.bash_completions.d/ollama" >> ~/.bashrc
   ```
+
+## Description
 
 The script includes completions for `ollama pull` by querying
 [ollama.com](https://ollama.com/search) using `curl` and a cache at

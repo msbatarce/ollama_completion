@@ -159,6 +159,9 @@ _ollama_ps() {
 }
 
 _use_gum_choose() {
+    if [[ ${#COMPREPLY[@]} -eq 0 ]]; then
+        return
+    fi
     # Save cursor position
     printf '\033[s'
     # # Move the cursor down 1 line

@@ -256,7 +256,7 @@ _ollama_completion() {
             if [[ ${OLLAMA_COMPLETION_GUM_CHOOSE_ENABLED} -eq 1 ]]; then
                 _use_gum_choose
             fi
-            if [[ ${#COMPREPLY[@]} -eq 1 ]]; then
+            if [[ ${#COMPREPLY[@]} -eq 1 && ${#COMP_WORDS[@]} -lt 3 ]]; then
                 MODEL="${COMPREPLY[0]}"
                 COMPREPLY=( $(compgen -W "$(_query_ollama_model_tags ${MODEL})" -- "${TAG}"))
                 COMPREPLY=("${COMPREPLY[@]/#/"$MODEL":}")

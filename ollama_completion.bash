@@ -50,13 +50,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 # -----------------------------------------------------------------------------
-
-if [[ ! $(which awk >/dev/null 2>&1 && echo $?) -eq 0 ]]; then
+if ! which awk >/dev/null 2>&1; then
     echo "[$BASH_SOURCE]: awk required for ollama completion script"
     return
 fi
 
-function _setup_cache() {
+_setup_cache() {
     OLLAMA_COMPLETION_CACHE_DIR=${TMPDIR:-/tmp}/ollama_completion
     OLLAMA_COMPLETION_MODELS_CACHE=${OLLAMA_COMPLETION_CACHE_DIR}/models
     OLLAMA_COMPLETION_TAGS_CACHE_DIR=${OLLAMA_COMPLETION_CACHE_DIR}/tags
@@ -69,24 +68,25 @@ function _setup_cache() {
 
 _setup_cache
 
-function _setup_env() {
+_setup_env() {
     if [[ -z "${OLLAMA_COMPLETION_CACHE_TTL_MINUTES}" ]]; then
         export OLLAMA_COMPLETION_CACHE_TTL_MINUTES=10
     fi
     if [[ -z "${OLLAMA_COMPLETION_GUM_CHOOSE_ENABLED}" ]]; then
         export OLLAMA_COMPLETION_GUM_CHOOSE_ENABLED=1
     fi
-    if [[ ! $(which gum 1>/dev/null 2>&1 && echo $?) -eq 0 ]]; then
+    
+    if ! which gum 1>/dev/null 2>&1; then
         OLLAMA_COMPLETION_GUM_CHOOSE_ENABLED=0
     fi
 
     if [[ -z "${QUERY_OLLAMA_LIB_ENABLED}" ]]; then
         export QUERY_OLLAMA_LIB_ENABLED=1
     fi
-    if [[ ! $(which xq >/dev/null 2>&1 && echo $?) -eq 0 ]]; then
+    if ! which xq >/dev/null 2>&1; then
         QUERY_OLLAMA_LIB_ENABLED=0
     fi
-    if [[ ! $(which curl >/dev/null 2>&1 && echo $?) -eq 0 ]]; then
+    if ! which curl >/dev/null 2>&1; then
         QUERY_OLLAMA_LIB_ENABLED=0
     fi
 }
@@ -175,11 +175,11 @@ _use_gum_choose() {
 }
 
 _models_completion() {
-    fn="$1"
+    local fn="$1"
     shift 1
-    cmds=($@)
-    MODEL=${cmds[2]}
-    TAG=${cmds[4]}
+    local cmds=($@)
+    local MODEL=${cmds[2]}
+    local TAG=${cmds[4]}
     if [[ ${#cmds[@]} -eq 5  && "$CUR" = "" ]]; then
         return
     fi
@@ -203,8 +203,8 @@ _ollama_completion() {
         return
     fi
 
-    CMD=${COMP_WORDS[1]}
-    CUR=${COMP_WORDS[$COMP_CWORD]}
+    local CMD=${COMP_WORDS[1]}
+    local CUR=${COMP_WORDS[$COMP_CWORD]}
     if [[ "$CUR" =~ ^- ]]; then
       COMPREPLY=($(compgen -W "$(_ollama_CMD_flags $CMD)" -- "${CUR}"))
       return
@@ -231,6 +231,8 @@ _ollama_completion() {
             return
             ;;
         pull)
+            local MODEL
+            local TAG
             if [[ $QUERY_OLLAMA_LIB_ENABLED = 0 ]]; then
                 return
             fi
